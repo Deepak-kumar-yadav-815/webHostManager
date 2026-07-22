@@ -14,8 +14,7 @@ const WebsiteControlPanel = ({ website, onBack }) => {
   const [showAiModal, setShowAiModal] = useState(false);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
-    
+    const socket = io('https://webhostmanager-tvh1.onrender.com');
     // Subscribe to this specific website's telemetry
     socket.emit('subscribe-telemetry', website._id);
 
@@ -91,8 +90,8 @@ const WebsiteControlPanel = ({ website, onBack }) => {
         </div>
         <div className="glass-panel" style={{ textAlign: 'center' }}>
           <h4 style={{ color: 'var(--text-secondary)' }}>Public URL</h4>
-          <a href={`http://localhost:5000/s/${website.shortUrlAlias}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '1rem', color: 'var(--accent-primary)', wordBreak: 'break-all' }}>
-            localhost:5000/s/{website.shortUrlAlias}
+          <a href={`https://webhostmanager-tvh1.onrender.com/s/${website.shortUrlAlias}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '1rem', color: 'var(--accent-primary)', wordBreak: 'break-all' }}>
+            https://webhostmanager-tvh1.onrender.com/s/{website.shortUrlAlias}
           </a>
         </div>
       </div>

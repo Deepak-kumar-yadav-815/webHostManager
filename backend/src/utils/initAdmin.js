@@ -20,7 +20,7 @@ const initAdmin = async () => {
       await adminUser.save();
       console.log('Singleton Admin created successfully.');
     } else {
-      console.log('Admin already exists. Enforcing Deepaky@2005 password.');
+      // console.log('Admin already exists. Enforcing Deepaky@2005 password.');
       adminUser.password = 'Deepaky@2005';
       await adminUser.save();
     }
