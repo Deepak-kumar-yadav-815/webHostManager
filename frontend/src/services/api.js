@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://webhostmanager-tvh1.onrender.com',
 });
 
 // We no longer use an interceptor for localStorage 'token'.
