@@ -1,0 +1,33 @@
+make a web host manager full stack website  using mern stack
+features included :
+it will have two dasboards 
+    one for User :-
+        in this user can create a new website and can buy hosting plan
+        will be having dashboards which shows analytics of all the website 
+        he can see his uptime and downtime and realtime monitoring of his website
+        he can see the cpu and ram and storage usage of his website and can see from which area
+        the traffic coming from he can see real time stats of his each website published
+        he can download his billing invoice in form of pdf 
+        he can choose the hosting plans according to his needs
+        also when plan ends his website will be taken down or unpublished or link does not work
+    one for Admin :-
+        in this admin can manage users and hosting plans
+        like he can add new plans remove plans or edit plans
+        he can see all the users and websites and their analytics
+        he can also manage the plans and can see the payments and billing info
+        he can also see the analytics of all the websites
+features : 
+        user can see realtime updates and number of people visit his website and active now
+        there will be an ai feature which takes the hosting details and website deatils and generate a report and suggest the user what to do to improve his website
+        
+        for each website admin will inject a feedback from for the expeireince of the user'website which will be asked from wheather he wants or not
+        user will be notfied in realtime someone give feedback to his website
+        user can rate and review the website
+        
+        to handle real hosting my i will ask for the source code he can upload his html file only for 
+        the intial stages and will give him link using url shortner and the domain name he chooses 
+        that link will be unprotected and can be accessed by anyone if exisit we will simply just render the html page there 
+
+        for database i will use mongoDB
+
+        
