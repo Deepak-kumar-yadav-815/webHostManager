@@ -723,8 +723,8 @@ const UserDashboard = () => {
 
       {/* Feedback Modal */}
       {selectedWebsiteFeedback && (
-        <div className="modal-overlay" onClick={() => setSelectedWebsiteFeedback(null)} style={{ animation: 'fadeIn 0.2s ease-out' }}>
-          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', animation: 'slideUp 0.3s ease-out' }}>
+        <div className="modal-overlay" onClick={() => setSelectedWebsiteFeedback(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
             <button className="modal-close" onClick={() => setSelectedWebsiteFeedback(null)}>&times;</button>
             <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MessageSquare size={24} color="var(--accent-primary)" /> Feedback: {selectedWebsiteFeedback}
