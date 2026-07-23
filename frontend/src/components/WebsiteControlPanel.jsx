@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 
 const WebsiteControlPanel = ({ website, onBack }) => {
   const [metricsData, setMetricsData] = useState([]);
-  const [currentMetrics, setCurrentMetrics] = useState({ cpuUsage: 0, ramUsage: 0, activeVisitors: 0 });
+  const [currentMetrics, setCurrentMetrics] = useState({ cpuUsage: 0, ramUsage: 0, activeVisitors: 0, topLocations: [] });
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiInsights, setAiInsights] = useState(null);
   const [aiUpdatedAt, setAiUpdatedAt] = useState(null);
@@ -96,18 +96,42 @@ const WebsiteControlPanel = ({ website, onBack }) => {
         </div>
       </div>
 
-      <h3>Live Resource Telemetry</h3>
-      <div style={{ width: '100%', height: 300, marginTop: '1rem', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={metricsData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="time" stroke="var(--text-secondary)" />
-            <YAxis stroke="var(--text-secondary)" />
-            <Tooltip contentStyle={{ background: 'var(--bg-secondary)', border: 'none', borderRadius: '8px', color: '#fff' }} />
-            <Line type="monotone" dataKey="cpu" stroke="#3b82f6" strokeWidth={3} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="ram" stroke="#10b981" strokeWidth={3} dot={false} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div className="glass-panel">
+          <h3 style={{ marginTop: 0, marginBottom: '1rem' }}>Live Resource Telemetry</h3>
+          <div style={{ width: '100%', height: 300, background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={metricsData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis dataKey="time" stroke="var(--text-secondary)" />
+                <YAxis stroke="var(--text-secondary)" />
+                <Tooltip contentStyle={{ background: 'var(--bg-secondary)', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                <Line type="monotone" dataKey="cpu" stroke="#3b82f6" strokeWidth={3} dot={false} isAnimationActive={false} />
+                <Line type="monotone" dataKey="ram" stroke="#10b981" strokeWidth={3} dot={false} isAnimationActive={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '1rem' }}>Active Locations</h3>
+          <div style={{ flex: 1, background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', overflowY: 'auto' }}>
+            {currentMetrics.topLocations && currentMetrics.topLocations.length > 0 ? (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {currentMetrics.topLocations.map((loc, index) => (
+                  <li key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: index !== currentMetrics.topLocations.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}>
+                    <span style={{ color: 'var(--text-primary)' }}>{loc.location}</span>
+                    <span style={{ background: 'rgba(59,130,246,0.2)', color: 'var(--accent-primary)', padding: '0.1rem 0.5rem', borderRadius: '12px', fontSize: '0.8rem' }}>{loc.count}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                No active locations
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {showAiModal && (

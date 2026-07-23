@@ -41,33 +41,53 @@ const getWebsiteMetrics = (websiteId, planTier = 'Basic Starter') => {
   const visitors = activeVisitorsCache.get(websiteId);
   const activeCount = visitors ? visitors.size : 0;
   
-  // Base resource limits based on plan
-  let maxCpu = 10;
-  let maxRam = 128; // MB
+  // Aggregate locations
+  const locationsMap = new Map();
+  if (visitors) {
+    for (const data of visitors.values()) {
+      const locStr = `${data.geo.city !== 'Unknown' ? data.geo.city + ', ' : ''}${data.geo.country}`;
+      locationsMap.set(locStr, (locationsMap.get(locStr) || 0) + 1);
+    }
+  }
+  
+  // Convert map to sorted array of objects [{ location, count }]
+  const topLocations = Array.from(locationsMap.entries())
+    .map(([location, count]) => ({ location, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5); // Top 5 locations
+
+  // Realistic resource usage for static HTML
+  // Base usage is very low (e.g. Nginx serving static files)
+  let maxCpu = 2; // 2% max for basic
+  let maxRam = 30; // 30 MB max for basic
   
   if (planTier.includes('Pro')) {
-    maxCpu = 30;
-    maxRam = 512;
+    maxCpu = 5;
+    maxRam = 60;
   } else if (planTier.includes('Enterprise')) {
-    maxCpu = 80;
-    maxRam = 2048;
+    maxCpu = 10;
+    maxRam = 120;
   }
 
-  // Simulate CPU usage based on active visitors + randomness
-  // E.g., each visitor adds ~1-3% CPU usage depending on plan
-  let cpuUsage = Math.min(100, Math.floor(Math.random() * maxCpu) + (activeCount * 2));
-  let ramUsage = Math.min(maxRam, Math.floor(Math.random() * (maxRam / 2)) + (activeCount * 15));
+  // CPU usage: ~0.05% to 0.1% per active visitor
+  let cpuUsage = (Math.random() * 0.5) + (activeCount * 0.1);
+  cpuUsage = Math.min(maxCpu, parseFloat(cpuUsage.toFixed(2)));
+
+  // RAM usage: Base 10MB + ~0.5MB per visitor
+  let ramUsage = 10 + (Math.random() * 2) + (activeCount * 0.5);
+  ramUsage = Math.min(maxRam, parseFloat(ramUsage.toFixed(1)));
   
-  // If zero visitors, keep a very low idle baseline
+  // If zero visitors, idle baseline
   if (activeCount === 0) {
-    cpuUsage = Math.max(1, Math.floor(Math.random() * 3));
-    ramUsage = Math.max(10, Math.floor(Math.random() * 20));
+    cpuUsage = parseFloat((Math.random() * 0.2).toFixed(2));
+    ramUsage = parseFloat((10 + Math.random() * 2).toFixed(1));
   }
 
   return {
     activeVisitors: activeCount,
     cpuUsage,
     ramUsage,
+    topLocations,
     timestamp: Date.now()
   };
 };
