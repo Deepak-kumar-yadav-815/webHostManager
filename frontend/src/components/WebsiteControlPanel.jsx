@@ -12,6 +12,9 @@ const WebsiteControlPanel = ({ website, onBack }) => {
   const [aiInsights, setAiInsights] = useState(null);
   const [aiUpdatedAt, setAiUpdatedAt] = useState(null);
   const [showAiModal, setShowAiModal] = useState(false);
+  
+  // Track local state for immediate UI updates without needing a full refetch
+  const [feedbackEnabled, setFeedbackEnabled] = useState(website.enableFeedback !== false);
 
   useEffect(() => {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -53,6 +56,15 @@ const WebsiteControlPanel = ({ website, onBack }) => {
     }
   };
 
+  const handleToggleFeedback = async () => {
+    try {
+      const res = await api.put(`/websites/${website._id}/toggle-feedback`);
+      setFeedbackEnabled(res.data.enableFeedback);
+    } catch (error) {
+      alert('Failed to toggle feedback status');
+    }
+  };
+
   return (
     <div className="glass-panel" style={{ width: '100%', animation: 'fadeIn 0.3s ease-in' }}>
       <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
@@ -67,11 +79,32 @@ const WebsiteControlPanel = ({ website, onBack }) => {
             <Sparkles size={18} /> AI Insights
           </button>
         </div>
-        <div className="flex items-center gap-2">
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: website.status === 'active' ? 'var(--success)' : 'var(--danger)', boxShadow: `0 0 10px ${website.status === 'active' ? 'var(--success)' : 'var(--danger)'}` }}></div>
-          <span style={{ fontWeight: 'bold', color: website.status === 'active' ? 'var(--success)' : 'var(--danger)' }}>
-            {website.status.toUpperCase()}
-          </span>
+        <div className="flex items-center gap-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Feedback Form:</span>
+            <button 
+              onClick={handleToggleFeedback}
+              style={{
+                width: '40px', height: '22px', borderRadius: '20px', 
+                background: feedbackEnabled ? 'var(--success)' : 'var(--bg-secondary)',
+                border: `1px solid ${feedbackEnabled ? 'var(--success)' : 'var(--border-subtle)'}`,
+                position: 'relative', cursor: 'pointer', transition: 'all 0.3s'
+              }}
+              title={feedbackEnabled ? "Disable Feedback Form" : "Enable Feedback Form"}
+            >
+              <div style={{
+                width: '16px', height: '16px', borderRadius: '50%', background: 'white',
+                position: 'absolute', top: '2px', left: feedbackEnabled ? '20px' : '2px', transition: 'all 0.3s'
+              }}></div>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: website.status === 'active' ? 'var(--success)' : 'var(--danger)', boxShadow: `0 0 10px ${website.status === 'active' ? 'var(--success)' : 'var(--danger)'}` }}></div>
+            <span style={{ fontWeight: 'bold', color: website.status === 'active' ? 'var(--success)' : 'var(--danger)' }}>
+              {website.status.toUpperCase()}
+            </span>
+          </div>
         </div>
       </div>
 

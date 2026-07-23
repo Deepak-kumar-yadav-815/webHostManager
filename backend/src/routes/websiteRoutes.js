@@ -1,5 +1,5 @@
 const express = require('express');
-const { createWebsite, getMyWebsites, deleteWebsite, getAIInsights, serveWebsite } = require('../controllers/websiteController');
+const { createWebsite, getMyWebsites, deleteWebsite, getAIInsights, serveWebsite, toggleFeedback } = require('../controllers/websiteController');
 const { protect } = require('../middlewares/authMiddleware');
 const upload = require('../middlewares/uploadMiddleware');
 
@@ -11,6 +11,8 @@ router.route('/')
 
 router.route('/:id')
   .delete(protect, deleteWebsite);
+
+router.put('/:id/toggle-feedback', protect, toggleFeedback);
 
 router.get('/:id/ai-insights', protect, getAIInsights);
 

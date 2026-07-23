@@ -186,13 +186,37 @@ const serveWebsite = async (req, res) => {
     // Inject Feedback Widget if enabled
     if (website.enableFeedback !== false) {
       const feedbackWidget = `
-        <div id="whm-feedback-widget" style="position: fixed; bottom: 20px; right: 20px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; font-family: sans-serif;">
-          <h4>Leave Feedback</h4>
-          <input type="number" id="whm-rating" min="1" max="5" placeholder="Rating (1-5)" style="display:block; margin-bottom:5px; width:100%;">
-          <textarea id="whm-comment" placeholder="Comment" style="display:block; margin-bottom:5px; width:100%;"></textarea>
-          <button onclick="submitFeedback()" style="background:#007bff; color:white; border:none; padding:5px 10px; cursor:pointer; width:100%;">Submit</button>
+        <div id="whm-feedback-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: sans-serif;">
+          <!-- Floating Action Button -->
+          <button id="whm-feedback-fab" onclick="toggleWhmFeedback()" style="width: 50px; height: 50px; border-radius: 50%; background: #3b82f6; color: white; border: none; box-shadow: 0 4px 12px rgba(59,130,246,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </button>
+
+          <!-- Feedback Form Modal -->
+          <div id="whm-feedback-widget" style="display: none; position: absolute; bottom: 70px; right: 0; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 280px; border: 1px solid #e5e7eb;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h4 style="margin: 0; color: #1f2937;">Leave Feedback</h4>
+              <button onclick="toggleWhmFeedback()" style="background: transparent; border: none; color: #9ca3af; cursor: pointer; font-size: 20px; line-height: 1;">&times;</button>
+            </div>
+            <input type="number" id="whm-rating" min="1" max="5" placeholder="Rating (1-5 Stars)" style="display:block; margin-bottom:10px; width:100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box;">
+            <textarea id="whm-comment" placeholder="What did you think?" rows="3" style="display:block; margin-bottom:15px; width:100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; resize: none;"></textarea>
+            <button onclick="submitWhmFeedback()" style="background:#3b82f6; color:white; border:none; padding:10px; border-radius: 6px; cursor:pointer; width:100%; font-weight: 600; transition: background 0.2s;">Send Feedback</button>
+          </div>
+
           <script>
-            function submitFeedback() {
+            function toggleWhmFeedback() {
+              const widget = document.getElementById('whm-feedback-widget');
+              const fab = document.getElementById('whm-feedback-fab');
+              if (widget.style.display === 'none') {
+                widget.style.display = 'block';
+                fab.style.transform = 'scale(0.9)';
+              } else {
+                widget.style.display = 'none';
+                fab.style.transform = 'scale(1)';
+              }
+            }
+
+            function submitWhmFeedback() {
               const ratingStr = document.getElementById('whm-rating').value;
               const comment = document.getElementById('whm-comment').value;
               const rating = ratingStr ? parseInt(ratingStr, 10) : undefined;
@@ -214,7 +238,8 @@ const serveWebsite = async (req, res) => {
                 return res.json();
               }).then(data => {
                 alert('Feedback submitted successfully!');
-                document.getElementById('whm-feedback-widget').style.display = 'none';
+                // Completely hide the entire feedback container (FAB + Form) upon successful submission
+                document.getElementById('whm-feedback-container').style.display = 'none';
               }).catch(err => alert(err.message));
             }
           </script>
@@ -235,4 +260,23 @@ const serveWebsite = async (req, res) => {
   }
 };
 
-module.exports = { createWebsite, getMyWebsites, serveWebsite, deleteWebsite, getAIInsights };
+// @desc    Toggle feedback status for a website
+// @route   PUT /api/websites/:id/toggle-feedback
+// @access  Private
+const toggleFeedback = async (req, res) => {
+  try {
+    const website = await Website.findOne({ _id: req.params.id, user: req.user._id });
+    if (!website) {
+      return res.status(404).json({ message: 'Website not found' });
+    }
+
+    website.enableFeedback = !website.enableFeedback;
+    await website.save();
+
+    res.json({ message: 'Feedback status toggled', enableFeedback: website.enableFeedback });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createWebsite, getMyWebsites, serveWebsite, deleteWebsite, getAIInsights, toggleFeedback };
