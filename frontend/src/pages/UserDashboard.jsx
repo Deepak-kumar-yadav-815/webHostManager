@@ -270,6 +270,16 @@ const UserDashboard = () => {
     }
   };
 
+  const handleDeleteFeedback = async (feedbackId) => {
+    if (!window.confirm('Are you sure you want to delete this feedback?')) return;
+    try {
+      await api.delete(`/feedback/${feedbackId}`);
+      setFeedbackList(prev => prev.filter(fb => fb._id !== feedbackId));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to delete feedback');
+    }
+  };
+
   return (
     <div className="dashboard-layout">
       {/* Sleek Sidebar */}
@@ -747,7 +757,21 @@ const UserDashboard = () => {
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                       <strong style={{ fontSize: '1.1rem' }}>{Array(fb.rating).fill('⭐').join('')}</strong>
-                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{new Date(fb.createdAt).toLocaleDateString()}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{new Date(fb.createdAt).toLocaleDateString()}</span>
+                        <button 
+                          onClick={() => handleDeleteFeedback(fb._id)}
+                          style={{
+                            background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '0.2rem',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+                          }}
+                          title="Delete Feedback"
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                     <p style={{ margin: 0, lineHeight: 1.5 }}>"{fb.comment}"</p>
                   </div>

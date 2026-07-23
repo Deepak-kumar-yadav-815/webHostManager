@@ -82,4 +82,29 @@ const getAllFeedback = async (req, res) => {
   }
 };
 
-module.exports = { postFeedback, getWebsiteFeedback, submitPlatformFeedback, getAllFeedback };
+// @desc    Delete feedback
+// @route   DELETE /api/feedback/:id
+// @access  Private
+const deleteFeedback = async (req, res) => {
+  try {
+    const feedback = await Feedback.findById(req.params.id);
+    if (!feedback) {
+      return res.status(404).json({ message: 'Feedback not found' });
+    }
+
+    // Verify ownership of the website that the feedback belongs to
+    const website = await Website.findOne({ _id: feedback.website, user: req.user._id });
+    
+    // Allow deletion if the user owns the website, OR if they are an admin
+    if (!website && req.user.role !== 'Admin') {
+      return res.status(401).json({ message: 'Not authorized to delete this feedback' });
+    }
+
+    await feedback.deleteOne();
+    res.json({ message: 'Feedback deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { postFeedback, getWebsiteFeedback, submitPlatformFeedback, getAllFeedback, deleteFeedback };

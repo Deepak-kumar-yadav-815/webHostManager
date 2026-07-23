@@ -24,6 +24,11 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'Server is running normally' });
 });
 
+// Simple Ping-Pong Route for health check
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/plans', planRoutes);
