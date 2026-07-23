@@ -173,7 +173,10 @@ const serveWebsite = async (req, res) => {
     }
 
     // Log Telemetry
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    if (clientIp.includes(',')) {
+      clientIp = clientIp.split(',')[0].trim();
+    }
     telemetryService.logVisit(website._id.toString(), clientIp);
 
     // Fetch HTML from Cloudinary
