@@ -5,7 +5,8 @@ const {
   uploadRepository, 
   getMyRepositories, 
   hostRepository, 
-  unhostRepository 
+  unhostRepository,
+  deleteRepository
 } = require('../controllers/repositoryController');
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.post('/', protect, upload.single('htmlFile'), uploadRepository);
 router.get('/', protect, getMyRepositories);
 router.post('/:id/host', protect, hostRepository);
 router.post('/:id/unhost', protect, unhostRepository);
+router.delete('/:id', protect, deleteRepository);
 
 module.exports = router;

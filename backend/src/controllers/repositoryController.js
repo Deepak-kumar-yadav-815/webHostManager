@@ -128,4 +128,33 @@ const unhostRepository = async (req, res) => {
   }
 };
 
-module.exports = { uploadRepository, getMyRepositories, hostRepository, unhostRepository };
+// @desc    Delete a repository
+// @route   DELETE /api/repositories/:id
+// @access  Private
+const deleteRepository = async (req, res) => {
+  try {
+    const repositoryId = req.params.id;
+
+    const repository = await Repository.findOne({ _id: repositoryId, user: req.user._id });
+    if (!repository) return res.status(404).json({ message: 'Repository not found' });
+    
+    // If it's hosted, unhost it by deleting the Website document
+    if (repository.activeWebsiteId) {
+      await Website.findByIdAndDelete(repository.activeWebsiteId);
+    }
+
+    // Delete the file from Cloudinary
+    if (repository.cloudinaryRawUrl) {
+      await WebsiteService.deleteHTMLFromCloudinary(repository.cloudinaryRawUrl);
+    }
+
+    // Delete the Repository document
+    await Repository.findByIdAndDelete(repositoryId);
+
+    res.status(200).json({ message: 'Repository deleted successfully' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { uploadRepository, getMyRepositories, hostRepository, unhostRepository, deleteRepository };

@@ -120,14 +120,26 @@ const UserDashboard = () => {
     }
   };
 
-  const unhostRepo = async (repoId) => {
+  const unhostRepo = async (id) => {
     if (!window.confirm('Are you sure you want to unhost this node? It will become inactive.')) return;
     try {
-      await api.post(`/repositories/${repoId}/unhost`);
+      await api.post(`/repositories/${id}/unhost`);
       alert('Node unhosted successfully!');
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to unhost');
+      fetchData(); // Refresh both repositories and websites
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error unhosting node');
+    }
+  };
+
+  const handleDeleteRepository = async (id) => {
+    if (window.confirm('Are you sure you want to delete this repository? This will permanently delete the file and unhost any active website connected to it. This cannot be undone.')) {
+      try {
+        await api.delete(`/repositories/${id}`);
+        setRepositories(prev => prev.filter(repo => repo._id !== id));
+        fetchData(); // Refresh websites in case one was unhosted
+      } catch (error) {
+        alert(error.response?.data?.message || 'Error deleting repository');
+      }
     }
   };
 
@@ -389,11 +401,22 @@ const UserDashboard = () => {
                         <td style={{ fontWeight: 600 }}>{repo.name}</td>
                         <td><span className={`badge badge-${repo.status === 'hosted' ? 'active' : 'queued'}`}>{repo.status}</span></td>
                         <td>
-                          {repo.status === 'unhosted' ? (
-                            <button onClick={() => hostRepo(repo._id)} className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>Host This</button>
-                          ) : (
-                            <button onClick={() => unhostRepo(repo._id)} className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Unhost</button>
-                          )}
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            {repo.status === 'unhosted' ? (
+                              <button onClick={() => hostRepo(repo._id)} className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>Host This</button>
+                            ) : (
+                              <button onClick={() => unhostRepo(repo._id)} className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}>Unhost</button>
+                            )}
+                            <button 
+                              onClick={() => handleDeleteRepository(repo._id)} 
+                              style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '0.4rem', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                              title="Delete Repository"
+                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
