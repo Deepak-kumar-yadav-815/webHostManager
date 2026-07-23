@@ -32,7 +32,7 @@ const logVisit = (websiteId, ip) => {
   const geo = geoip.lookup(ip);
   visitors.set(ip, {
     timestamp: Date.now(),
-    geo: geo ? { country: geo.country, city: geo.city } : { country: 'Unknown', city: 'Unknown' }
+    geo: geo ? { country: geo.country, region: geo.region, city: geo.city } : null
   });
 };
 
@@ -45,7 +45,16 @@ const getWebsiteMetrics = (websiteId, planTier = 'Basic Starter') => {
   const locationsMap = new Map();
   if (visitors) {
     for (const data of visitors.values()) {
-      const locStr = `${data.geo.city !== 'Unknown' ? data.geo.city + ', ' : ''}${data.geo.country}`;
+      let locStr = 'Unknown Location';
+      if (data.geo) {
+        if (data.geo.city) {
+          locStr = `${data.geo.city}, ${data.geo.country}`;
+        } else if (data.geo.region) {
+          locStr = `${data.geo.region}, ${data.geo.country}`;
+        } else if (data.geo.country) {
+          locStr = data.geo.country;
+        }
+      }
       locationsMap.set(locStr, (locationsMap.get(locStr) || 0) + 1);
     }
   }

@@ -503,17 +503,23 @@ const UserDashboard = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                           <div>
                             <h4 style={{ fontSize: '1.2rem', margin: 0 }}>{site.name}</h4>
-                            <a 
-                              href={`https://webhostmanager-tvh1.onrender.com/s/${site.shortUrlAlias}`} 
-                              target="_blank" 
-                              rel="noreferrer" 
-                              onClick={(e) => e.stopPropagation()} 
-                              style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem', textDecoration: 'none', fontSize: '0.9rem' }}
-                              onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-primary)'}
-                              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
-                            >
-                              /{site.shortUrlAlias} <ExternalLink size={14} />
-                            </a>
+                            {(() => {
+                              const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                              const publicUrl = isLocalhost ? `http://localhost:5000/s/${site.shortUrlAlias}` : `https://webhostmanager-tvh1.onrender.com/s/${site.shortUrlAlias}`;
+                              return (
+                                <a 
+                                  href={publicUrl} 
+                                  target="_blank" 
+                                  rel="noreferrer" 
+                                  onClick={(e) => e.stopPropagation()} 
+                                  style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem', textDecoration: 'none', fontSize: '0.9rem' }}
+                                  onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-primary)'}
+                                  onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                                >
+                                  /{site.shortUrlAlias} <ExternalLink size={14} />
+                                </a>
+                              );
+                            })()}
                           </div>
                           <div title={site.status} style={{ width: '12px', height: '12px', borderRadius: '50%', background: site.status === 'active' ? 'var(--success)' : 'var(--danger)', boxShadow: `0 0 10px ${site.status === 'active' ? 'var(--success)' : 'var(--danger)'}` }}></div>
                         </div>

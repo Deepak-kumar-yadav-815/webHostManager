@@ -11,7 +11,9 @@ const ContactUs = () => {
       const email = e.target.elements[2].value;
       const comment = e.target.elements[3].value;
       
-      const response = await fetch('https://webhostmanager-tvh1.onrender.com/api/feedback/platform', {
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const backendUrl = isLocalhost ? 'http://localhost:5000' : 'https://webhostmanager-tvh1.onrender.com';
+      const response = await fetch(`${backendUrl}/api/feedback/platform`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, comment })

@@ -14,7 +14,9 @@ const WebsiteControlPanel = ({ website, onBack }) => {
   const [showAiModal, setShowAiModal] = useState(false);
 
   useEffect(() => {
-    const socket = io('https://webhostmanager-tvh1.onrender.com', { transports: ['websocket'] });
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const backendUrl = isLocalhost ? 'http://localhost:5000' : 'https://webhostmanager-tvh1.onrender.com';
+    const socket = io(backendUrl, { transports: ['websocket'] });
     // Subscribe to this specific website's telemetry
     socket.emit('subscribe-telemetry', website._id);
 
@@ -90,9 +92,16 @@ const WebsiteControlPanel = ({ website, onBack }) => {
         </div>
         <div className="glass-panel" style={{ textAlign: 'center' }}>
           <h4 style={{ color: 'var(--text-secondary)' }}>Public URL</h4>
-          <a href={`https://webhostmanager-tvh1.onrender.com/s/${website.shortUrlAlias}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '1rem', color: 'var(--accent-primary)', wordBreak: 'break-all' }}>
-            webhostmanager-tvh1.onrender.com/s/{website.shortUrlAlias}
-          </a>
+          {(() => {
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const publicHost = isLocalhost ? 'localhost:5000' : 'webhostmanager-tvh1.onrender.com';
+            const publicUrl = isLocalhost ? `http://localhost:5000/s/${website.shortUrlAlias}` : `https://webhostmanager-tvh1.onrender.com/s/${website.shortUrlAlias}`;
+            return (
+              <a href={publicUrl} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '1rem', color: 'var(--accent-primary)', wordBreak: 'break-all' }}>
+                {publicHost}/s/{website.shortUrlAlias}
+              </a>
+            );
+          })()}
         </div>
       </div>
 
