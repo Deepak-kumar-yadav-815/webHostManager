@@ -25,7 +25,7 @@ const NotificationBell = () => {
     fetchNotifications();
 
     // Connect to Socket.io for real-time updates
-    const newSocket = io('https://webhostmanager-tvh1.onrender.com');
+    const newSocket = io('https://webhostmanager-tvh1.onrender.com', { transports: ['websocket'] });
     setSocket(newSocket);
 
     newSocket.emit('join', user._id.toString());

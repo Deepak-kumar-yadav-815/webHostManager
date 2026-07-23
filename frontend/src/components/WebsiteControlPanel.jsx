@@ -14,7 +14,7 @@ const WebsiteControlPanel = ({ website, onBack }) => {
   const [showAiModal, setShowAiModal] = useState(false);
 
   useEffect(() => {
-    const socket = io('https://webhostmanager-tvh1.onrender.com');
+    const socket = io('https://webhostmanager-tvh1.onrender.com', { transports: ['websocket'] });
     // Subscribe to this specific website's telemetry
     socket.emit('subscribe-telemetry', website._id);
 
