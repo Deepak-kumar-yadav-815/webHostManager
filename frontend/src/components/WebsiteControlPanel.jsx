@@ -91,7 +91,7 @@ const WebsiteControlPanel = ({ website, onBack }) => {
         <div className="glass-panel" style={{ textAlign: 'center' }}>
           <h4 style={{ color: 'var(--text-secondary)' }}>Public URL</h4>
           <a href={`https://webhostmanager-tvh1.onrender.com/s/${website.shortUrlAlias}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: '1rem', color: 'var(--accent-primary)', wordBreak: 'break-all' }}>
-            https://webhostmanager-tvh1.onrender.com/s/{website.shortUrlAlias}
+            webhostmanager-tvh1.onrender.com/s/{website.shortUrlAlias}
           </a>
         </div>
       </div>

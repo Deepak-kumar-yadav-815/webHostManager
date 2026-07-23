@@ -12,7 +12,7 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: '*', // Set to frontend URL in production
+    origin: ['http://localhost:5173', 'https://web-host-manager-c8pthvsul.vercel.app'], // Allow both local and production
     methods: ['GET', 'POST'],
   },
 });

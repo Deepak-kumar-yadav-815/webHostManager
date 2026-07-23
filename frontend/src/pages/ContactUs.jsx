@@ -11,7 +11,7 @@ const ContactUs = () => {
       const email = e.target.elements[2].value;
       const comment = e.target.elements[3].value;
       
-      const response = await fetch('http://localhost:5000/api/feedback/platform', {
+      const response = await fetch('https://webhostmanager-tvh1.onrender.com/api/feedback/platform', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, comment })

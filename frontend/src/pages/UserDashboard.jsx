@@ -504,7 +504,7 @@ const UserDashboard = () => {
                           <div>
                             <h4 style={{ fontSize: '1.2rem', margin: 0 }}>{site.name}</h4>
                             <a 
-                              href={`http://localhost:5000/s/${site.shortUrlAlias}`} 
+                              href={`https://webhostmanager-tvh1.onrender.com/s/${site.shortUrlAlias}`} 
                               target="_blank" 
                               rel="noreferrer" 
                               onClick={(e) => e.stopPropagation()} 
